@@ -2,8 +2,7 @@ import gennav
 import rospy
 from gennav_ros.utils import parse_env_str
 from trajectory_msgs.msg import MultiDOFJointTrajectory
-from gennav_ros.conversions import msg_to_traj
-
+from gennav_ros.conversions import traj_to_msg
 class Commander:
     def __init__(self, planner, env_name):
         self.planner = planner
@@ -24,7 +23,7 @@ class Commander:
         timer = rospy.Timer(replan)
 
     def _publish_traj(self, traj):
-        traj_msg = msg_to_traj(traj)
+        traj_msg = traj_to_msg(traj)
         self._traj_pub.publish(traj_msg)
 
     def _env_cb(self, msg):
