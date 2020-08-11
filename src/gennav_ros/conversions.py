@@ -10,6 +10,15 @@ from tajectory_msgs.msg import (
 
 
 def traj_to_msg(traj):
+    """Converts the trajectory planned by the planner to a publishable ROS message
+
+    Args:
+        traj (gennav.utils.Trajectory): Trajectory planned by the planner
+
+    Returns:
+        geometry_msgs/MultiDOFJointTrajectory.msg: A publishable ROS message
+    """
+
     traj_msg = MultiDOFJointTrajectory(
         points=[], joint_names=None, header=None
     )
@@ -41,6 +50,15 @@ def traj_to_msg(traj):
 
 
 def msg_to_traj(msg):
+    """Converts the trajectory containing ROS message to gennav.utils.Trajectory data type
+
+    Args:
+        msg (geometry_msgs/MultiDOFJointTrajectory.msg): The ROS message
+
+    Returns:
+        gennav.utils.Trajectory : Object containing the trajectory data
+    """
+
     path = []
     timestamps = []
     for point in msg.points:
