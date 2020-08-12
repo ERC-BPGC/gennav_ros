@@ -13,26 +13,33 @@ class Controller:
             "/gennav/traj", MultiDOFJointTrajectory, self._traj_cb
         )
         self._vel_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
-        self.odom_sub = rospy.Subscriber("/odom", Odometry, self._odom_sub)
+        self.odom_sub = rospy.Subscriber("/odom", Odometry, self._odom_cb)
         self.traj = None
         self.controller = controller
         self.velocities = Twist()
-        rospy.Timer(rospy.Duration(2), self._traj_cb)
-        rospy.Timer(rospy.Duration(2), self._odom_sub)
+        self.timer = rospy.Timer(self._publish_vel)
 
     def _traj_cb(self, msg):
-        self.traj = msg_to_traj(msg)
-        self._publish_vel()
+        """Callback function for trajectory.
 
-    def _odom_sub(self, msg):
+        Args:
+            msg (MultiDOFJointTrajectory): Subscribed Trajectory on /gennav/traj topic
+        """
+        self.traj = msg_to_traj(msg)
+
+    def _odom_cb(self, msg):
+        """Callback function for odometry
+
+        Args:
+            msg (Odometry): Subscribed Odometry of the robot on /odom topic
+        """
         self.controller.set_state(Odom_to_RobotState(msg))
 
     def _publish_vel(self):
+        """Method to publish the velocities on /cmd_vel topic.
+        """
         if self.traj is None:
             pass
         else:
-            while not rospy.is_shutdown():
-                self.velocities = Velocity_to_Twist(
-                    self.controller.compute_vel(self.traj)
-                )
-                self._vel_pub.publish(self.velocities)
+            self.velocities = Velocity_to_Twist(self.controller.compute_vel(self.traj))
+            self._vel_pub.publish(self.velocities)
