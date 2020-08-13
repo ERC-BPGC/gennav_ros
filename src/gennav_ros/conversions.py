@@ -1,8 +1,8 @@
-import tf
-from geometry_msgs.msg import Point, Quaternion, Transform, Twist
-
 import gennav.utils as utils
+import tf
 from gennav.utils import RobotState, Trajectory, Velocity
+from geometry_msgs.msg import Point, Quaternion, Transform, Twist, Vector3
+
 from tajectory_msgs.msg import (
     MultiDOFJointTrajectory,
     MultiDOFJointTrajectoryPoint,
@@ -97,3 +97,72 @@ def msg_to_traj(msg):
 
     traj = Trajectory(path=path, timestamps=timestamps)
     return traj
+
+
+def Odom_to_RobotState(msg):
+    """Converts a ROS message of type nav_msgs/Odometry.msg to an object of type gennav.utils.RobotState
+
+    Args:
+        msg (nav_msgs/Odometry.msg): ROS message containing the pose and velocity of the robot
+
+    Returns:
+        gennav.utils.RobotState: A RobotState() object which can be passed to the controller
+    """
+
+    position = utils.Point(
+        x=msg.pose.pose.position.x,
+        y=msg.pose.pose.position.y,
+        z=msg.pose.pose.position.z,
+    )
+
+    orientation = tf.transformations.euler_from_quaternion(
+        [
+            msg.pose.pose.orientation.x,
+            msg.pose.pose.orientation.y,
+            msg.pose.pose.orientation.z,
+            msg.pose.pose.orientation.w,
+        ]
+    )
+    orientation = utils.OrientationRPY(
+        roll=orientation[0], pitch=orientation[1], yaw=orientation[2]
+    )
+
+    linear_vel = utils.Vector3D(
+        x=msg.twist.twist.linear.x,
+        y=msg.twist.twist.linear.y,
+        z=msg.twist.twist.linear.z,
+    )
+    angular_vel = utils.Vector3D(
+        x=msg.twist.twist.angular.x,
+        y=msg.twist.twist.angular.y,
+        z=msg.twist.twist.angular.z,
+    )
+    velocity = Velocity(linear=linear_vel, angular=angular_vel)
+
+    state = RobotState(
+        position=position, orientation=orientation, velocity=velocity
+    )
+
+    return state
+
+
+def Velocity_to_Twist(velocity):
+    """Converts an object of type gennav.utils.Velocity to a ROS message (Twist) publishable on cmd_vel
+
+    Args:
+        velocity (gennav.utils.Velociy): Velocity to be sent to the robot
+
+    Returns:
+        geometry_msgs/Twist.msg: ROS message which can be sent to the robot via the cmd_vel topic
+    """
+
+    linear = Vector3(
+        x=velocity.linear.x, y=velocity.linear.y, z=velocity.linear.z
+    )
+    angular = Vector3(
+        x=velocity.angular.x, y=velocity.angular.y, z=velocity.angular.z
+    )
+
+    msg = Twist(linear=linear, angular=angular)
+
+    return msg
