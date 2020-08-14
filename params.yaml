@@ -1,0 +1,4 @@
+planner: "prm"
+env_name: "polygon"
+goal: (0,0)
+start: (10,12)
