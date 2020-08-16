@@ -10,6 +10,7 @@ project(gennav_ros)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   geometry_msgs
+  nav_msgs
   trajectory_msgs
 )
 
