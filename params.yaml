@@ -1,4 +1,9 @@
-planner: "prm"
-env_name: "polygon"
-goal: (0,0)
-start: (10,12)
+# Choose planner from RRT PRM PRMStar PotentialField RRG InformedRRTstar
+# Specify all parameter values as well
+planner_name: "PRM(sampler=UniformRectSampler, r=5, n=100)"
+# Choose env from PolygonEnv and ScanEnv
+# Specify all parameter values as well
+env_name: "PolygonEnv(buffer_dist=0.1)"
+obstacles_data: [[(8, 5), (7, 8), (2, 9), (3, 5)], [(3, 3), (3, 5), (5, 5), (5, 3)]]
+goal: [0,0]
+start: [10,12]

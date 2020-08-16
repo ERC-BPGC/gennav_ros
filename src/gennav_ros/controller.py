@@ -1,12 +1,15 @@
-import rospy
 import gennav
+import rospy
 from gennav_ros.conversions import msg_to_traj
-from trajectory_msgs.msg import MultiDOFJointTrajectory
 from geometry_msgs.msg import Twist
+from trajectory_msgs.msg import MultiDOFJointTrajectory
+
 
 class Controller:
     def __init__(self):
-        self._traj_sub = rospy.Subscriber("/gennav/traj", MultiDOFJointTrajectory, callback=self._traj_cb)
+        self._traj_sub = rospy.Subscriber(
+            "/gennav/traj", MultiDOFJointTrajectory, callback=self._traj_cb
+        )
         self._vel_pub = rospy.Publisher("/cmd_vel", Twist)
         self.traj = None
 
