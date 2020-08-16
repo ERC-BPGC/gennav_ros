@@ -21,6 +21,7 @@ class Controller:
 
     def _traj_cb(self, msg):
         """Callback function for trajectory.
+
         Args:
             msg (MultiDOFJointTrajectory): Subscribed Trajectory on /gennav/traj topic
         """
@@ -28,6 +29,7 @@ class Controller:
 
     def _odom_cb(self, msg):
         """Callback function for odometry
+
         Args:
             msg (Odometry): Subscribed Odometry of the robot on /odom topic
         """
