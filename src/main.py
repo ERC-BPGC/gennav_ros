@@ -8,37 +8,33 @@ from gennav.utils.samplers import *
 from gennav_ros.commander import Commander
 from gennav_ros.controller import Controller
 
-def planner_args():
-    param_list=rospy.get_param_names()
-    for param in param_list:
-        param_list[param_list.index(param)]=param[1:]
-    param_dict={}
-    chk=eval(planner_name+".__init__.__code__.co_varnames")
-    for param in param_list:
-        if param in chk:
-            param_dict[param]=rospy.get_param(param)
-    return param_dict
+planner_dict={"RRT":RRT,"PRM":PRM,"PRMStar":PRMStar,"PotentialField":PotentialField,"RRG":RRG,"InformedRRTstar":InformedRRTstar}
+env_dict={"PolygonEnv":PolygonEnv,"ScanEnv":ScanEnv}
 
-def env_args():
+
+def yaml_to_params():
     param_list=rospy.get_param_names()
-    for param in param_list:
-        param_list[param_list.index(param)]=param[1:]
-    print param_list
     param_dict={}
-    chk=eval(env_name+".__init__.__code__.co_varnames")
     for param in param_list:
-        if param in chk:
-            param_dict[param]=rospy.get_param(param)
+        param=param[1:]
+        param_dict[param]=rospy.get_param(param)
     return param_dict
 
 
 planner_name = rospy.get_param("planner_name")
 env_name = rospy.get_param("env_name")
 obstacles = rospy.get_param("obstacle_data")
-planner_params=planner_args()
-env_params=env_args()
-planner = eval(planner_name+"(**planner_params)")
-env = eval(env_name+"(**env_params)")
+for planner_chk in planner_dict:
+    if planner_name==planner_chk:
+        planner=planner_dict[planner_name]
+        break
+for env_chk in env_dict:
+    if env_name==env_chk:
+        env=env_dict[env_name]
+        break
+params=yaml_to_params()
+planner =planner(**params)
+env = env_name(**params)
 env.update(obstacles)
 commander = Commander(planner, env)
 goal = rospy.get_param("goal")

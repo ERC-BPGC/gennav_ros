@@ -1,7 +1,7 @@
 # Choose planner from RRT PRM PRMStar PotentialField RRG InformedRRTstar
 # Specify all parameter values as well
 planner_name: "PRM"
-sampler: UniformRectSampler
+sampler: "UniformRectSampler"
 r: 5
 n: 100
 # Choose env from PolygonEnv and ScanEnv
