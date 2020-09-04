@@ -71,7 +71,7 @@ class Commander:
         """Callback function for environment
 
         Args:
-            msg (LaserScan): Subscribed to LaserScan data of the robot on /gennav/env topic
+            msg (sensor_msgs/LaserScan.msg): Subscribed to LaserScan (ROS msg) data of the robot on /gennav/env topic
         """
         data = self.msg_to_env_data(msg)
         data = self.transform_env_data(data, self.curr_state)
