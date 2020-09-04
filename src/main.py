@@ -31,14 +31,10 @@ def yaml_to_params():
 planner_name = rospy.get_param("planner_name")
 env_name = rospy.get_param("env_name")
 obstacles = rospy.get_param("obstacle_data")
-for planner_chk in planner_dict:
-    if planner_name == planner_chk:
-        planner = planner_dict[planner_name]
-        break
-for env_chk in env_dict:
-    if env_name == env_chk:
-        env = env_dict[env_name]
-        break
+if planner_name in planner_dict.keys():
+    planner = planner_dict[planner_name]
+if env_name in env_dict.keys():
+    env = env_dict[env_name]
 params = yaml_to_params()
 planner = planner(**params)
 env = env_name(**params)
