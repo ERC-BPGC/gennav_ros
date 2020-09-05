@@ -3,7 +3,7 @@ name: Lint
 on: [pull_request]
 
 jobs:
-  flake8:
+  isort:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
