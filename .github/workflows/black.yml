@@ -1,0 +1,13 @@
+name: Lint Check
+
+on: [pull_request]
+
+jobs:
+  black:
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            python-version: [3.6, 2.7]
+            os: [ubuntu-latest, ubuntu-18.04, windows-latest, macOS-latest]
+    steps:
+      - uses: lgeiger/black-action@v1.0.1
