@@ -1,12 +1,8 @@
-import gennav.utils as utils
 import tf
+from gennav import utils as utils
 from gennav.utils import RobotState, Trajectory, Velocity
 from geometry_msgs.msg import Point, Quaternion, Transform, Twist, Vector3
-
-from tajectory_msgs.msg import (
-    MultiDOFJointTrajectory,
-    MultiDOFJointTrajectoryPoint,
-)
+from tajectory_msgs.msg import MultiDOFJointTrajectory, MultiDOFJointTrajectoryPoint
 
 
 def traj_to_msg(traj):
@@ -19,21 +15,15 @@ def traj_to_msg(traj):
         geometry_msgs/MultiDOFJointTrajectory.msg: A publishable ROS message
     """
 
-    traj_msg = MultiDOFJointTrajectory(
-        points=[], joint_names=None, header=None
-    )
+    traj_msg = MultiDOFJointTrajectory(points=[], joint_names=None, header=None)
     for state, timestamp in zip(traj.path, traj.timestamps):
         quaternion = tf.transformations.quaternion_from_euler(
-            state.orientation.roll,
-            state.orientation.pitch,
-            state.orientation.yaw,
+            state.orientation.roll, state.orientation.pitch, state.orientation.yaw,
         )
         velocity = Twist()
         acceleration = Twist()
         transforms = Transform(
-            translation=Point(
-                state.position.x, state.position.y, state.position.z
-            ),
+            translation=Point(state.position.x, state.position.y, state.position.z),
             rotation=Quaternion(
                 quaternion[0], quaternion[1], quaternion[2], quaternion[3]
             ),
@@ -90,9 +80,7 @@ def msg_to_traj(msg):
             z=point.velocities[0].linear.z,
         )
         velocity = Velocity(linear=linear_vel, angular=angular_vel)
-        state = RobotState(
-            position=position, orientation=rotation, velocity=velocity
-        )
+        state = RobotState(position=position, orientation=rotation, velocity=velocity)
         path.append(state)
 
     traj = Trajectory(path=path, timestamps=timestamps)
@@ -139,9 +127,7 @@ def Odom_to_RobotState(msg):
     )
     velocity = Velocity(linear=linear_vel, angular=angular_vel)
 
-    state = RobotState(
-        position=position, orientation=orientation, velocity=velocity
-    )
+    state = RobotState(position=position, orientation=orientation, velocity=velocity)
 
     return state
 
@@ -156,12 +142,8 @@ def Velocity_to_Twist(velocity):
         geometry_msgs/Twist.msg: ROS message which can be sent to the robot via the cmd_vel topic
     """
 
-    linear = Vector3(
-        x=velocity.linear.x, y=velocity.linear.y, z=velocity.linear.z
-    )
-    angular = Vector3(
-        x=velocity.angular.x, y=velocity.angular.y, z=velocity.angular.z
-    )
+    linear = Vector3(x=velocity.linear.x, y=velocity.linear.y, z=velocity.linear.z)
+    angular = Vector3(x=velocity.angular.x, y=velocity.angular.y, z=velocity.angular.z)
 
     msg = Twist(linear=linear, angular=angular)
 
