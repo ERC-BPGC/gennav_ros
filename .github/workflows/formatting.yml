@@ -29,6 +29,6 @@ jobs:
         run: |
           black --check .
 
-      -name: Lint with isort
+      - name: Lint with isort
         run: |
           isort --profile black -c .
