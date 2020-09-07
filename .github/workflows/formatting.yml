@@ -7,14 +7,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            python-version: [3.6, 2.7]
             os: [ubuntu-latest, ubuntu-18.04, windows-latest, macOS-latest]
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.6'
       # Install Dependencies
       - name: Install dependencies
         run: |
