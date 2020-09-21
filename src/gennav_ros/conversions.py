@@ -1,8 +1,9 @@
 import tf
 from gennav import utils as utils
-from gennav.utils import RobotState, Trajectory, Velocity
+from gennav.utils import RobotState, Trajectory
+from gennav.utils.common import Velocity
 from geometry_msgs.msg import Point, Quaternion, Transform, Twist, Vector3
-from tajectory_msgs.msg import MultiDOFJointTrajectory, MultiDOFJointTrajectoryPoint
+from trajectory_msgs.msg import MultiDOFJointTrajectory, MultiDOFJointTrajectoryPoint
 
 
 def traj_to_msg(traj):
