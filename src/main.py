@@ -1,48 +1,76 @@
 #!/usr/bin/env python
+
 import rospy
-from gennav.envs import PolygonEnv, ScanEnv
-from gennav.planners import RRT, RRG, PRM, PRMStar, PotentialField, InformedRRTstar
+import sensor_msgs
+
+import gennav
 from gennav.utils import RobotState
 from gennav.utils.geometry import Point
-from gennav.utils.samplers import UniformCircularSampler, UniformRectSampler
-from gennav_ros.commander import Commander
-from gennav_ros.controller import Controller
 
-planner_dict = {
-    "RRT": RRT,
-    "PRM": PRM,
-    "PRMStar": PRMStar,
-    "PotentialField": PotentialField,
-    "RRG": RRG,
-    "InformedRRTstar": InformedRRTstar,
+import gennav_ros
+
+# Dictionary of implemented planners
+planner_registry = {
+    "RRT": gennav.planners.RRT,
+    "PRM": gennav.planners.PRM,
+    "PRMStar": gennav.planners.PRMStar,
+    "PotentialField": gennav.planners.PotentialField,
+    "RRG": gennav.planners.RRG,
+    "InformedRRTstar": gennav.planners.InformedRRTstar,
 }
-env_dict = {"PolygonEnv": PolygonEnv, "ScanEnv": ScanEnv}
 
+# Dictionary of implemented environments
+env_registry = {"PolygonEnv": gennav.envs.PolygonEnv, "ScanEnv": gennav.envs.ScanEnv}
 
-def yaml_to_params():
-    param_list = rospy.get_param_names()
-    param_dict = {}
-    for param in param_list:
-        param = param[1:]
-        param_dict[param] = rospy.get_param(param)
-    return param_dict
+# Dictionary of compatible ROS message types
+msg_dtype_registry = {"sensor_msgs/LaserScan": sensor_msgs.msg.LaserScan}
 
+# Get a dictionary of parameters from ROS parameter server
+param_list = rospy.get_param_names()
+param_dict = {}
+for param in param_list:
+    param = param[1:]
+    param_dict[param] = rospy.get_param(param)
 
-planner_name = rospy.get_param("planner_name")
-env_name = rospy.get_param("env_name")
-obstacles = rospy.get_param("obstacle_data")
-if planner_name in planner_dict.keys():
-    planner = planner_dict[planner_name]
-if env_name in env_dict.keys():
-    env = env_dict[env_name]
-params = yaml_to_params()
-planner = planner(**params)
-env = env_name(**params)
-env.update(obstacles)
-commander = Commander(planner=planner, env=env, replan_interval=params["replan_interval"], msg_dtype=params["msg_dtype"])
-goal = rospy.get_param("goal")
-start = rospy.get_param("start")
-goal_state = RobotState(position=Point(goal[0], goal[1]))
-start_state = RobotState(position=Point(start[0], start[1]))
+# Instantiate planner
+planner_name = param_dict["planner_name"]
+if planner_name in planner_registry.keys():
+    planner = planner_registry[planner_name](**param_dict)
+else:
+    raise NotImplementedError("Specified planner ", planner_name, " not implemeted")
+
+# Instantiate environemnt
+env_name = param_dict["env_name"]
+if env_name in env_registry.keys():
+    env = env_registry[env_name](**param_dict)
+    env.update(param_dict["obstacle_data"])
+else:
+    raise NotImplementedError("Specified env ", env_name, " not implemeted")
+
+# Get message type object
+msg_dtype_name = param_dict["msg_dtype_name"]
+if msg_dtype_name in msg_dtype_registry.keys():
+    msg_dtype = msg_dtype_registry[msg_dtype_name]()
+else:
+    raise NotImplementedError(
+        "Specified message type ", planner_name, " is incompatible"
+    )
+
+# Construct controller
+controller = gennav_ros.Controller()
+
+# Construct  commander
+replan_interval = rospy.Duration(param_dict["replan_interval"])
+commander = gennav_ros.Commander(
+    planner=planner,
+    env=env,
+    replan_interval=replan_interval,
+    msg_dtype=msg_dtype,
+)
+goal = param_dict["goal"]
+start = param_dict["start"]
+
+# Execute command
+goal_state = RobotState(position=Point(*goal))
+start_state = RobotState(position=Point(*start))
 commander.goto(goal_state, start_state)
-controller = Controller()

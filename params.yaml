@@ -1,15 +1,34 @@
-# Choose planner from RRT PRM PRMStar PotentialField RRG InformedRRTstar
-# Specify all parameter values as well
+# This file is used to configure a system launched by launch/main.launch
+# Modify the field given below as applicable
+# Note that all fields may not be used in every configurations
+
+# PLANNER OPTIONS
+# Specify planner from ["RRT" "PRM" "PRMStar" "PotentialField" "RRG" "InformedRRTstar"]
 planner_name: "PRM"
+
+# SAMPLER OPTIONS
+# Specify sampler from ["UniformCircularSampler" "UniformCircularSampler"]
 sampler: "UniformRectSampler"
+# maximum radius to look for neighbours
 r: 5
-n: 100
-# Choose env from PolygonEnv and ScanEnv
-# Specify all parameter values as well
+# total no. of nodes to be sampled in sample_area
+n: 100 
+
+# ENVRIONMENT OPTIONS
+# Specify environment from ["PolygonEnv" "ScanEnv"]
 env_name: "PolygonEnv"
-buffer_dist: 0.1
+# distance to buffer all obstacles for collision checking
+buffer_dist: 0.1 
+# Initial data
 obstacle_data: [[(8, 5), (7, 8), (2, 9), (3, 5)], [(3, 3), (3, 5), (5, 5), (5, 3)]]
-goal: [0,0]
-start: [10,12]
+
+# COMMANDER OPTIONS
+# Specify goal point
+goal: [0, 0]
+# Specify start point
+start: [10, 12]
+# desired period between sucessive replan attempts
 replan_interval: 10
-msg_dtype: "laserscan"
+# type of ROS message used by obstacle data in the
+# standard `package/msg_name` format used by ROS
+msg_dtype_name: "sensor_msgs/LaserScan"
