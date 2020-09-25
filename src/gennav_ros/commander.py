@@ -19,7 +19,9 @@ class Commander:
         self.planner = planner
         self.env = env
         self.msg_dtype = parse_dtype(msg_dtype)
-        self.transform_env_data, self.msg_to_env_data = parse_env(self.env, self.msg_dtype)
+        self.transform_env_data, self.msg_to_env_data = parse_env(
+            self.env, self.msg_dtype
+        )
         self.replan_interval = replan_interval
         self.curr_state = gennav.utils.RobotState()
         self._env_sub = rospy.Subscriber(
