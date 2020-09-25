@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
+import gennav
+import gennav_ros
 import rospy
 import sensor_msgs
-
-import gennav
 from gennav.utils import RobotState
 from gennav.utils.geometry import Point
-
-import gennav_ros
 
 # Dictionary of implemented samplers
 sampler_registry = {

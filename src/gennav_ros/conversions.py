@@ -148,3 +148,15 @@ def Velocity_to_Twist(velocity):
     msg = Twist(linear=linear, angular=angular)
 
     return msg
+
+
+def LaserScan_to_polygons(scan_data):
+    """Converts data of sensor_msgs/LaserScan ROS message type to polygons
+
+    Args:
+        scan_data (sensor_msgs.msg.LaserScan): Data to be converted
+
+    Returns:
+        list[list[tuple[float, float, float]]]: Correspondinf polygons
+    """
+    raise NotImplementedError
