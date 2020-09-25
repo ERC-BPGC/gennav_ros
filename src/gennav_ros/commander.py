@@ -7,7 +7,7 @@ from trajectory_msgs.msg import MultiDOFJointTrajectory
 
 
 class Commander:
-    """ Coordinates planning and control
+    """Coordinates planning and control
 
     Args:
         planner (gennav.planners.Planner): object of the Planner class for path planning algorithms

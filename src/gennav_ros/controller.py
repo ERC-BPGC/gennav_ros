@@ -35,8 +35,7 @@ class Controller:
         self.controller.set_state(Odom_to_RobotState(msg))
 
     def _publish_vel(self):
-        """Method to publish the velocities on /cmd_vel topic.
-        """
+        """Method to publish the velocities on /cmd_vel topic."""
         if self.traj is None:
             pass
         else:
