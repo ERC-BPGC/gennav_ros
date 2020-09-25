@@ -11,3 +11,5 @@ buffer_dist: 0.1
 obstacle_data: [[(8, 5), (7, 8), (2, 9), (3, 5)], [(3, 3), (3, 5), (5, 5), (5, 3)]]
 goal: [0,0]
 start: [10,12]
+replan_interval: 10
+msg_dtype: "laserscan"
