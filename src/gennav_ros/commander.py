@@ -1,38 +1,53 @@
 import gennav
 import rospy
 from gennav_ros.conversions import Odom_to_RobotState, traj_to_msg
-from gennav_ros.utils import parse_env, parse_dtype
+from gennav_ros.utils import get_funcs
 from nav_msgs.msg import Odometry
 from trajectory_msgs.msg import MultiDOFJointTrajectory
 
 
 class Commander:
-    def __init__(self, planner, env, replan_interval, msg_dtype):
-        """Init Commander Parameters.
-        Args:
-            planner (gennav.planners.Planner): object of the Planner class for path planning algorithms
-            env (gennav.envs.Environment): object of the Environment class for an environment
-            replan_interval (rospy.Duration):  desired period between callbacks
-            msg_dtype (str): Type of message used for envrionment data
-        """
+    """ Coordinates planning and control
+
+    Args:
+        planner (gennav.planners.Planner): object of the Planner class for path planning algorithms
+        env (gennav.envs.Environment): object of the Environment class for an environment
+        msg_dtype (ROS Message): Type of message used for envrionment data
+        replan_interval (rospy.Duration): Desired period between callbacks. Defaults to 1s
+    """
+
+    def __init__(self, planner, env, msg_dtype, replan_interval=rospy.Duration(1)):
+        # Initialise commander node
         rospy.init_node("commander", anonymous=True)
+
+        # Store attributes
         self.planner = planner
         self.env = env
-        self.msg_dtype = parse_dtype(msg_dtype)
-        self.transform_env_data, self.msg_to_env_data = parse_env(
+        self.replan_interval = replan_interval
+        self.msg_dtype = msg_dtype
+
+        # Get conversion and transformation functions for environment
+        # data according to types of environment and message data
+        self.msg_to_env_data, self.transform_env_data = get_funcs(
             self.env, self.msg_dtype
         )
-        self.replan_interval = replan_interval
+
+        # Initialise variables
+        self.traj = gennav.utils.Trajectory()
         self.curr_state = gennav.utils.RobotState()
+
+        # Subscribe to envrionment data topic
         self._env_sub = rospy.Subscriber(
             "/gennav/env", self.msg_dtype, callback=self._env_cb
         )
+
+        # Subscribe to odometry
         self._odom_sub = rospy.Subscriber("/odom", Odometry, self._odom_cb)
+
+        # Publisher for planned trajectory
         self._traj_pub = rospy.Publisher(
             "/gennav/traj", MultiDOFJointTrajectory, queue_size=10
         )
-        self.timer = rospy.Timer()
-        self.traj = gennav.utils.Trajectory()
 
     def goto(self, goal, start=None):
         """Method to find Trajectory of the robot using the planner.plan method.
@@ -40,18 +55,22 @@ class Commander:
             goal (gennav.utils.RobotState): A RobotState() object which is passed to the planner.plan method.
             start (gennav.utils.RobotState, optional): A RobotState() object which can be passed to the planner.plan method. Defaults to None.
         """
-        if start is not None:
-            self.traj = self.planner.plan(start, goal, self.env)
-        else:
-            self.traj = self.planner.plan(self.curr_state, goal, self.env)
+        # Set current state as start if not specified
+        start = self.curr_state if start is not None else start
+
+        # Compute first planned trajectory
+        self.traj = self.planner.plan(start, goal, self.env)
+
+        # Publish first planned trajectory
         self._publish_traj(self.traj)
 
         def replan():
             """Method to plan the path again using the planner.replan method."""
             if not self.env.get_traj_status(self.traj):
-                traj = self.planner.replan(self.curr_state, goal, self.env)
-                self._publish_traj(traj)
+                self.traj = self.planner.replan(self.curr_state, goal, self.env)
+                self._publish_traj(self.traj)
 
+        # Keep replanning at specified intervals
         self.timer = rospy.Timer(rospy.Duration(self.replan_interval), replan)
 
     def _publish_traj(self, traj):
