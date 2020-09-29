@@ -157,6 +157,7 @@ def LaserScan_to_polygons(scan_data, threshold):
 
     Args:
         scan_data (sensor_msgs.msg.LaserScan): Data to be converted
+        threshold (int):Threshold for deciding when to start a new obstacle
 
     Returns:
         list[list[tuple[float, float, float]]]: Corresponding polygons
