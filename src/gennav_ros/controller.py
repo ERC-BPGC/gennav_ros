@@ -1,9 +1,8 @@
 import rospy
+from gennav_ros.conversions import Odom_to_RobotState, Velocity_to_Twist, msg_to_traj
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from trajectory_msgs.msg import MultiDOFJointTrajectory
-
-from gennav_ros.conversions import Odom_to_RobotState, Velocity_to_Twist, msg_to_traj
 
 
 class Controller:
@@ -36,8 +35,7 @@ class Controller:
         self.controller.set_state(Odom_to_RobotState(msg))
 
     def _publish_vel(self):
-        """Method to publish the velocities on /cmd_vel topic.
-        """
+        """Method to publish the velocities on /cmd_vel topic."""
         if self.traj is None:
             pass
         else:

@@ -19,7 +19,9 @@ def traj_to_msg(traj):
     traj_msg = MultiDOFJointTrajectory(points=[], joint_names=None, header=None)
     for state, timestamp in zip(traj.path, traj.timestamps):
         quaternion = tf.transformations.quaternion_from_euler(
-            state.orientation.roll, state.orientation.pitch, state.orientation.yaw,
+            state.orientation.roll,
+            state.orientation.pitch,
+            state.orientation.yaw,
         )
         velocity = Twist()
         acceleration = Twist()
@@ -149,3 +151,15 @@ def Velocity_to_Twist(velocity):
     msg = Twist(linear=linear, angular=angular)
 
     return msg
+
+
+def LaserScan_to_polygons(scan_data):
+    """Converts data of sensor_msgs/LaserScan ROS message type to polygons
+
+    Args:
+        scan_data (sensor_msgs.msg.LaserScan): Data to be converted
+
+    Returns:
+        list[list[tuple[float, float, float]]]: Correspondinf polygons
+    """
+    raise NotImplementedError
