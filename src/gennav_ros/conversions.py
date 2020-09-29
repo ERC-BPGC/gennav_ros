@@ -1,3 +1,5 @@
+import math
+
 import tf
 from gennav import utils as utils
 from gennav.utils import RobotState, Trajectory, Velocity
@@ -18,9 +20,7 @@ def traj_to_msg(traj):
     traj_msg = MultiDOFJointTrajectory(points=[], joint_names=None, header=None)
     for state, timestamp in zip(traj.path, traj.timestamps):
         quaternion = tf.transformations.quaternion_from_euler(
-            state.orientation.roll,
-            state.orientation.pitch,
-            state.orientation.yaw,
+            state.orientation.roll, state.orientation.pitch, state.orientation.yaw,
         )
         velocity = Twist()
         acceleration = Twist()
@@ -168,20 +168,26 @@ def LaserScan_to_polygons(scan_data, threshold):
             obstacle_1D.append([])
             current_obstacle_index += 1
         obstacle_1D[current_obstacle_index].append(scan_data.ranges[i + 1])
+    obstacle_list = []
+    least_angle = 2 * math.pi / len(scan_data.ranges)
+    pt_count = 0
 
-	obstacle_list = []
-	least_angle = 2*math.pi/len(scan_data.ranges)
-	pt_count = 0
+    for i in range(len(obstacle_1D)):
+        for j in range(len(obstacle_1D[i])):
+            obstacle_1D[i][j] = (
+                obstacle_1D[i][j],
+                angle_deviation + pt_count * least_angle,
+            )
+            pt_count = pt_count + 1
 
-	for i in range(len(obstacles_1D)):
-		for j in range(len(obstacles_1D[i])):
-			obstacles_1D[i][j] = (obstacles_1D[i][j], angle_deviation + pt_count*least_angle)
-			pt_count = pt_count + 1
-		
+    point_list = []
     for obstacle in obstacle_1D:
         for point_rtheta in obstacle:
-            point=(point_rtheta[0]*math.cos(point_rtheta[1]),point_rtheta[0]*math.sin(point_rtheta[1]),0)
+            point = (
+                (point_rtheta[0] * math.cos(point_rtheta[1])),
+                (point_rtheta[0] * math.sin(point_rtheta[1])),
+                0,
+            )
             point_list.append(point)
         obstacle_list.append(point_list)
-
-	return obstacle_list
+    return obstacle_list
