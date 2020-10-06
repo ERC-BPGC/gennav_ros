@@ -90,7 +90,10 @@ controller_node = gennav_ros.Controller(controller)
 # Construct  commander
 replan_interval = rospy.Duration(param_dict["replan_interval"])
 commander_node = gennav_ros.Commander(
-    planner=planner, env=env, replan_interval=replan_interval, msg_dtype=msg_dtype,
+    planner=planner,
+    env=env,
+    replan_interval=replan_interval,
+    msg_dtype=msg_dtype,
 )
 
 # Execute command
