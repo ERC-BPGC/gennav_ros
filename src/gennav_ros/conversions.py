@@ -152,13 +152,13 @@ def Velocity_to_Twist(velocity):
     return msg
 
 
-def LaserScan_to_polygons(scan_data, threshold):
+def LaserScan_to_polygons(scan_data, threshold, angle_deviation=0):
     """Converts data of sensor_msgs/LaserScan ROS message type to polygons
 
     Args:
         scan_data (sensor_msgs.msg.LaserScan): Data to be converted
         threshold (int):Threshold for deciding when to start a new obstacle
-
+        angle_deviation: Deviation of the zero ofthe lidar from zero of the bot(in radians)
     Returns:
         list[list[tuple[float, float, float]]]: Corresponding polygons
     """
