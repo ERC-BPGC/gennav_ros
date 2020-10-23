@@ -1,3 +1,5 @@
+import math
+
 import tf
 from gennav import utils as utils
 from gennav.utils import RobotState, Trajectory
@@ -153,13 +155,43 @@ def Velocity_to_Twist(velocity):
     return msg
 
 
-def LaserScan_to_polygons(scan_data):
+def LaserScan_to_polygons(scan_data, threshold, angle_deviation=0):
     """Converts data of sensor_msgs/LaserScan ROS message type to polygons
 
     Args:
         scan_data (sensor_msgs.msg.LaserScan): Data to be converted
-
+        threshold (int):Threshold for deciding when to start a new obstacle
+        angle_deviation: Deviation of the zero ofthe lidar from zero of the bot(in radians)
     Returns:
-        list[list[tuple[float, float, float]]]: Correspondinf polygons
+        list[list[tuple[float, float, float]]]: Corresponding polygons
     """
-    raise NotImplementedError
+    obstacle_1D = [[scan_data.ranges[0]]]
+    current_obstacle_index = 0
+    for i in range(len(scan_data.ranges) - 1):
+        if abs(scan_data.ranges[i] - scan_data.ranges[i + 1]) > threshold:
+            obstacle_1D.append([])
+            current_obstacle_index += 1
+        obstacle_1D[current_obstacle_index].append(scan_data.ranges[i + 1])
+    obstacle_list = []
+    least_angle = 2 * math.pi / len(scan_data.ranges)
+    pt_count = 0
+
+    for i in range(len(obstacle_1D)):
+        for j in range(len(obstacle_1D[i])):
+            obstacle_1D[i][j] = (
+                obstacle_1D[i][j],
+                angle_deviation + pt_count * least_angle,
+            )
+            pt_count = pt_count + 1
+
+    point_list = []
+    for obstacle in obstacle_1D:
+        for point_rtheta in obstacle:
+            point = (
+                (point_rtheta[0] * math.cos(point_rtheta[1])),
+                (point_rtheta[0] * math.sin(point_rtheta[1])),
+                0,
+            )
+            point_list.append(point)
+        obstacle_list.append(point_list)
+    return obstacle_list
