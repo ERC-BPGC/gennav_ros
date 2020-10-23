@@ -7,7 +7,7 @@ from trajectory_msgs.msg import MultiDOFJointTrajectory
 
 class Controller:
     def __init__(self, controller):
-        rospy.init_node("controller", anonymous=True)
+        #rospy.init_node("controller", anonymous=True)
         self._traj_sub = rospy.Subscriber(
             "/gennav/traj", MultiDOFJointTrajectory, self._traj_cb
         )
@@ -16,7 +16,7 @@ class Controller:
         self.traj = None
         self.controller = controller
         self.velocities = Twist()
-        self.timer = rospy.Timer(self._publish_vel)
+        self.timer = rospy.Timer(rospy.Duration(0.1) ,self._publish_vel)
 
     def _traj_cb(self, msg):
         """Callback function for trajectory.
