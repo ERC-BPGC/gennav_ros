@@ -84,7 +84,7 @@ if __name__ == "__main__":
     # Get message type object
     msg_dtype_name = param_dict["msg_dtype_name"]
     if msg_dtype_name in msg_dtype_registry.keys():
-        msg_dtype = msg_dtype_registry[msg_dtype_name]()
+        msg_dtype = msg_dtype_registry[msg_dtype_name]
     else:
         raise NotImplementedError(
             "Specified message type ", planner_name, " is not compatible"
