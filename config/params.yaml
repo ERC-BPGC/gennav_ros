@@ -1,0 +1,121 @@
+params:
+  # This file is used to configure a system launched by launch/main.launch
+  # Modify the field given below as applicable
+
+  # SAMPLER OPTIONS
+  # specify sampler from ["UniformRectSampler" "UniformCircularSampler"]
+  sampler_name: "UniformRectSampler"
+
+
+  # PLANNER OPTIONS
+  # specify planner from ["RRT" "PRM" "PRMStar" "PotentialField" "RRG" "InformedRRTstar"]
+  planner_name: "PRM"
+  # desired period between sucessive replan attempts
+  replan_interval: 10
+
+
+  # ENVRIONMENT OPTIONS
+  # specify environment from ["PolygonEnv" "ScanEnv"]
+  env_name: "PolygonEnv"
+
+
+  # CONTROLLER OPTIONS
+  # Specify controller from ["DiffPID", "OmniWheelPID"]
+  controller_name: "OmniWheelPID"
+
+
+  # COMMANDER OPTIONS
+  # specify start point
+  start: [10, 12]
+  # specify goal point
+  goal: [0, 0]
+
+
+  #OBJECT DETECTION PARAMETERS
+  # distance to buffer all obstacles for collision checking
+  buffer_dist: 0.1 
+  # Initial data
+  obstacle_data: [[[8, 5], [7, 8], [2, 9], [3, 5]], [[3, 3], [3, 5], [5, 5], [5, 3]]]
+  # type of ROS message used by obstacle data in the
+  # standard `package/msg_name` format used by ROS
+  msg_dtype_name: "sensor_msgs/LaserScan"
+
+
+
+  # Parameters for different envs,planners,samplers
+  # Set the parameters for only the chosen env, planner,sampler...
+
+  #SAMPLER PARAMETERS
+  UniformRectSampler:
+    #change goal_sample_p to 0 for PRM based planners
+    goal_sample_p: 0.2 
+    # limits for x and y (valid only for UniformRectSampler)
+    min_x:  0
+    max_x:  5
+    min_y:  0
+    max_y:  5
+
+  UniformCircularSampler:
+    #change goal_sample_p to 0 for PRM based planners
+    goal_sample_p: 0.2
+    # radius and cetre of sampling area (valid only for UniformCircularSampler)
+    radius: 5
+    centre: [0, 0]
+
+
+  #PLANNER PARAMETERS
+  PRM:
+    # maximum radius to look for neighbours
+    r: 5
+    # total no. of nodes to be sampled in sample_area
+    n: 100
+    
+  PRMStar:
+    # a constant for radius determination
+    c: 5
+    # total no. of nodes to be sampled in sample_area
+    n: 100
+
+  RRT:
+    expand_dis: 0.1
+
+  RRG:
+    expand_dis: 1.0
+    max_iter: 500
+
+  InformedRRTstar:
+    expand_dis: 0.1
+    neighbourhood_radius: 0.5
+    goal_distance: 0.2
+    max_iter: 500
+
+  RRTStar:
+    expand_dis: 0.1
+    neighbourhood_radius: 0.5
+    goal_distance: 0.2
+    max_iter: 500
+
+  PotentialField:
+    KP: 1
+    ETA: 1
+    THRESH: 2
+    STEP_SIZE: 0.1 
+
+
+  #CONTROLLER PARAMETERS
+  OmniWheelPID:
+    # limits for x and y components of velocity 
+    maxX: 1
+    maxY: 1
+    # Gains for P, I and D of x and y velocity 
+    xgains: [1, 0, 0]
+    ygains: [1, 0, 0]
+
+  DiffPID:
+    # limits for forward and angular velocity 
+    maxVel: 1
+    maxAng: 1
+    # Gains for P, I and D of forward and angular velocity 
+    vel_gains: [1, 0, 0]
+    angle_gains : [1, 0, 0]
+

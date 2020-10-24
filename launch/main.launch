@@ -2,7 +2,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
 
-    <rosparam command="load" file="$(find gennav_ros)/params.yaml" />
+    <rosparam command="load" file="$(find gennav_ros)/config/params.yaml" />
 
     <node name="main" type="main.py" pkg="gennav_ros" output="screen"/> 
 
