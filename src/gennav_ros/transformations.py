@@ -25,6 +25,9 @@ class Transformer:
 
         self.kwargs = kwargs
 
+        print self.env.__class__
+        print self.msg_dtype.__class__
+
     def init(self):
         """Init method for initialisng valid TF buffer and TF Listener
         """

@@ -58,7 +58,7 @@ def msg_to_traj(msg):
     timestamps = []
     for point in msg.points:
         timestamps.append(point.time_from_start)
-        position = utils.Point(
+        position = utils.common.Point(
             x=point.transforms[0].translation.x,
             y=point.transforms[0].translation.y,
             z=point.transforms[0].translation.z,
@@ -71,15 +71,15 @@ def msg_to_traj(msg):
                 point.transforms[0].rotation.w,
             ]
         )
-        rotation = utils.OrientationRPY(
+        rotation = utils.geometry.OrientationRPY(
             roll=rotation[0], pitch=rotation[1], yaw=rotation[2]
         )
-        linear_vel = utils.Vector3D(
+        linear_vel = utils.geometry.Vector3D(
             x=point.velocities[0].linear.x,
             y=point.velocities[0].linear.y,
             z=point.velocities[0].linear.z,
         )
-        angular_vel = utils.Vector3D(
+        angular_vel = utils.geometry.Vector3D(
             x=point.velocities[0].angular.x,
             y=point.velocities[0].angular.y,
             z=point.velocities[0].linear.z,
@@ -102,7 +102,7 @@ def Odom_to_RobotState(msg):
         gennav.utils.RobotState: A RobotState() object which can be passed to the controller
     """
 
-    position = utils.Point(
+    position = utils.common.Point(
         x=msg.pose.pose.position.x,
         y=msg.pose.pose.position.y,
         z=msg.pose.pose.position.z,
@@ -116,16 +116,16 @@ def Odom_to_RobotState(msg):
             msg.pose.pose.orientation.w,
         ]
     )
-    orientation = utils.OrientationRPY(
+    orientation = utils.geometry.OrientationRPY(
         roll=orientation[0], pitch=orientation[1], yaw=orientation[2]
     )
 
-    linear_vel = utils.Vector3D(
+    linear_vel = utils.geometry.Vector3D(
         x=msg.twist.twist.linear.x,
         y=msg.twist.twist.linear.y,
         z=msg.twist.twist.linear.z,
     )
-    angular_vel = utils.Vector3D(
+    angular_vel = utils.geometry.Vector3D(
         x=msg.twist.twist.angular.x,
         y=msg.twist.twist.angular.y,
         z=msg.twist.twist.angular.z,
@@ -138,7 +138,7 @@ def Odom_to_RobotState(msg):
 
 
 def Velocity_to_Twist(velocity):
-    """Converts an object of type gennav.utils.Velocity to a ROS message (Twist) publishable on cmd_vel
+    """Converts an object of type gennav.utils.common.Velocity to a ROS message (Twist) publishable on cmd_vel
 
     Args:
         velocity (gennav.utils.Velociy): Velocity to be sent to the robot

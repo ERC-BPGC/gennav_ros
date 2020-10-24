@@ -38,7 +38,7 @@ class Commander:
 
         # Subscribe to envrionment data topic
         self._env_sub = rospy.Subscriber(
-            "/gennav/env", self.msg_dtype, callback=self._env_cb
+            "/scan", self.msg_dtype, callback=self._env_cb
         )
 
         # Subscribe to odometry
@@ -87,7 +87,9 @@ class Commander:
         Args:
             msg (self.msg_dtype): Subscribed to ROS msg data of the robot on /gennav/env topic
         """
-        data = self.transformer(msg)        
+        print "data recieved"
+        data = self.transformer(msg)
+        print "transformed"        
         self.env.update(data)
 
     def _odom_cb(self, msg):

@@ -30,9 +30,9 @@ max_iter: 500
 # specify environment from ["PolygonEnv" "ScanEnv"]
 env_name: "PolygonEnv"
 # distance to buffer all obstacles for collision checking
-buffer_dist: 0.1 
+buffer_dist: 0.1
 # Initial data
-obstacle_data: [[(8, 5), (7, 8), (2, 9), (3, 5)], [(3, 3), (3, 5), (5, 5), (5, 3)]]
+obstacle_data: [[[8, 5], [7, 8], [2, 9], [3, 5]], [[3, 3], [3, 5], [5, 5], [5, 3]]]
 
 # CONTROLLER OPTIONS
 # Specify controller from ["DiffPID", "OmniWheelPID"]
@@ -52,9 +52,9 @@ angle_gains : [1, 0, 0]
 
 # COMMANDER OPTIONS
 # specify start point
-start: [10, 12]
+start: [0, 0, 0]
 # specify goal point
-goal: [0, 0]
+goal: [10, 10, 0]
 # desired period between sucessive replan attempts
 replan_interval: 10
 # type of ROS message used by obstacle data in the
