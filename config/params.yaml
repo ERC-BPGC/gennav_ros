@@ -35,7 +35,7 @@ params:
   # distance to buffer all obstacles for collision checking
   buffer_dist: 0.1 
   # Initial data
-  obstacle_data: [[(8, 5), (7, 8), (2, 9), (3, 5)], [(3, 3), (3, 5), (5, 5), (5, 3)]]
+  obstacle_data: [[[8, 5], [7, 8], [2, 9], [3, 5]], [[3, 3], [3, 5], [5, 5], [5, 3]]]
   # type of ROS message used by obstacle data in the
   # standard `package/msg_name` format used by ROS
   msg_dtype_name: "sensor_msgs/LaserScan"
