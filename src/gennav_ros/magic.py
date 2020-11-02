@@ -7,7 +7,7 @@ import math
 import tf2_geometry_msgs
 
 
-def convert_laser_scan_to_point(self, scan_data, threshold=0.25):
+def convert_laser_scan_to_point(scan_data, threshold=0.25):
     """Converts data of sensor_msgs/LaserScan ROS message type to polygons
     Args:
         scan_data (sensor_msgs.msg.LaserScan): Data to be converted
@@ -48,7 +48,7 @@ def convert_laser_scan_to_point(self, scan_data, threshold=0.25):
     return obstacle_list
 
 
-def transform_function_for_polygon_env(self, msg, tfBuffer, scan_frame, world_frame):
+def transform_function_for_polygon_env(msg, tfBuffer, scan_frame, world_frame):
     """Transform function for gennav.envs.polygon_env
     Args:
         msg (list[list[tuple[float, float, float]]]): Corresponding polygons
@@ -62,13 +62,12 @@ def transform_function_for_polygon_env(self, msg, tfBuffer, scan_frame, world_fr
         transformed_pts = []
         for pt in list_:
             pointStamped = PointStamped(
-                header=Header(frame_id=scan_frame, point=Point(pt[0], pt[1], pt[2]))
-            )
+                header=Header(frame_id=scan_frame), point=Point(pt[0], pt[1], pt[2]))
             pointTransformed = tf2_geometry_msgs.do_transform_point(
                 pointStamped, transform
             )
             transformed_pts.append(
-                PT(pointTransformed.x, pointTransformed.y, pointTransformed.z)
+                PT(pointTransformed.point.x, pointTransformed.point.y, pointTransformed.point.z)
             )
         new_msg.append(transformed_pts)
 

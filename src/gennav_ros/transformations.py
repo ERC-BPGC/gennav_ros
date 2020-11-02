@@ -2,7 +2,7 @@
 
 import rospy
 import tf2_ros
-from gennav.envs import scan_env
+from gennav.envs import polygon_env
 from gennav_ros.magic import (
     convert_laser_scan_to_point,
     transform_function_for_polygon_env,
@@ -25,8 +25,8 @@ class Transformer:
 
         self.kwargs = kwargs
 
-        print self.env.__class__
-        print self.msg_dtype.__class__
+        print self.env
+        print self.msg_dtype
 
     def init(self):
         """Init method for initialisng valid TF buffer and TF Listener
@@ -44,13 +44,12 @@ class Transformer:
         if self.tfbuffer is None or self.listener is None:
             raise RuntimeError("Transform Buffer and Listener not Initialised")
         elif (
-            self.env.__class__ == scan_env.ScanEnv
-            and self.msg_dtype.__class__ == LaserScan
+            self.env.__class__ == polygon_env.PolygonEnv
+            and self.msg_dtype == LaserScan
         ):
             return transform_function_for_polygon_env(
-                convert_laser_scan_to_point(raw_msg, self.kwargs["threshold"]),
-                self.kwargs["scan_frame"],
-                self.kwargs["world_frame"],
+                convert_laser_scan_to_point(raw_msg), self.tfbuffer,
+                "base_scan", "world",
             )
         else:
             raise NotImplementedError("Other Functionalites yet to be Implemented")

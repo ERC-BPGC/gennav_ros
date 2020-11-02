@@ -27,7 +27,7 @@ if __name__ == "__main__":
         "PotentialField": gennav.planners.PotentialField,
         "RRG": gennav.planners.RRG,
         "InformedRRTstar": gennav.planners.InformedRRTstar,
-        "RRTstar": gennav.planners.RRTstar,
+        #"RRTstar": gennav.planners.RRTStar,
     }
 
     # Dictionary of implemented environments
@@ -54,7 +54,8 @@ if __name__ == "__main__":
     # Instantiate sampler
     sampler_name = param_dict["sampler_name"]
     if sampler_name in sampler_registry.keys():
-        sampler = sampler_registry[sampler_name](goal, **param_dict[sampler_name])
+        print(param_dict[sampler_name])
+        sampler = sampler_registry[sampler_name](goal = goal, **param_dict[sampler_name])
     else:
         raise NotImplementedError(
             "Specified sampler ", sampler_name, " is not implemented"
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     env_name = param_dict["env_name"]
     if env_name in env_registry.keys():
         env = env_registry[env_name](**param_dict[env_name])
-        env.update(param_dict["obstacle_data"])
+        # env.update(param_dict["obstacle_data"])
     else:
         raise NotImplementedError(
             "Specified environment ", env_name, " is not implemented"
