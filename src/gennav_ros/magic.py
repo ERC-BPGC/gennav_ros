@@ -7,7 +7,7 @@ import math
 import tf2_geometry_msgs
 
 
-def convert_laser_scan_to_point(scan_data, threshold=0.25):
+`def convert_laser_scan_to_point(scan_data, threshold=0.25):
     """Converts data of sensor_msgs/LaserScan ROS message type to polygons
     Args:
         scan_data (sensor_msgs.msg.LaserScan): Data to be converted
