@@ -26,21 +26,18 @@ params:
 
   # COMMANDER OPTIONS
   # specify start point
-  start: [10, 12]
+  start: [10, 12, 0]
   # specify goal point
-  goal: [0, 0]
+  goal: [0, 0, 0]
 
 
   #OBJECT DETECTION PARAMETERS
   # distance to buffer all obstacles for collision checking
-  buffer_dist: 0.1 
-  # Initial data
-  obstacle_data: [[[8, 5], [7, 8], [2, 9], [3, 5]], [[3, 3], [3, 5], [5, 5], [5, 3]]]
+  PolygonEnv:
+    buffer_dist: 0.1 
   # type of ROS message used by obstacle data in the
   # standard `package/msg_name` format used by ROS
   msg_dtype_name: "sensor_msgs/LaserScan"
-
-
 
   # Parameters for different envs,planners,samplers
   # Set the parameters for only the chosen env, planner,sampler...

@@ -4,6 +4,7 @@ from gennav_ros.conversions import Odom_to_RobotState, traj_to_msg
 from gennav_ros.utils import get_funcs
 from nav_msgs.msg import Odometry
 from trajectory_msgs.msg import MultiDOFJointTrajectory
+from gennav_ros.transformations import Transformer
 
 
 class Commander:
@@ -18,7 +19,7 @@ class Commander:
 
     def __init__(self, planner, env, msg_dtype, replan_interval=rospy.Duration(1)):
         # Initialise commander node
-        rospy.init_node("commander", anonymous=True)
+        #rospy.init_node("commander", anonymous=True)
 
         # Store attributes
         self.planner = planner
@@ -26,11 +27,10 @@ class Commander:
         self.replan_interval = replan_interval
         self.msg_dtype = msg_dtype
 
-        # Get conversion and transformation functions for environment
-        # data according to types of environment and message data
-        self.msg_to_env_data, self.transform_env_data = get_funcs(
-            self.env, self.msg_dtype
-        )
+        # Intialise the transformer for obtaining transforms
+        self.transformer = Transformer(self.env, self.msg_dtype)
+        # init method of the transformer sets a valid tf buffer and listener
+        self.transformer.init()
 
         # Initialise variables
         self.traj = gennav.utils.Trajectory()
@@ -38,7 +38,7 @@ class Commander:
 
         # Subscribe to envrionment data topic
         self._env_sub = rospy.Subscriber(
-            "/gennav/env", self.msg_dtype, callback=self._env_cb
+            "/scan", self.msg_dtype, callback=self._env_cb
         )
 
         # Subscribe to odometry
@@ -48,6 +48,7 @@ class Commander:
         self._traj_pub = rospy.Publisher(
             "/gennav/traj", MultiDOFJointTrajectory, queue_size=10
         )
+        
 
     def goto(self, goal, start=None):
         """Method to find Trajectory of the robot using the planner.plan method.
@@ -86,8 +87,9 @@ class Commander:
         Args:
             msg (self.msg_dtype): Subscribed to ROS msg data of the robot on /gennav/env topic
         """
-        data = self.msg_to_env_data(msg)
-        data = self.transform_env_data(data, self.curr_state)
+        print "data recieved"
+        data = self.transformer(msg)
+        print "transformed"        
         self.env.update(data)
 
     def _odom_cb(self, msg):

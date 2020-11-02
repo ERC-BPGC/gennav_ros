@@ -3,12 +3,16 @@
 import gennav
 import gennav_ros
 import rospy
-import sensor_msgs
+import sensor_msgs.msg
 from gennav.utils import RobotState
 from gennav.utils.geometry import Point
 
 if __name__ == "__main__":
+    # Initialise a main node
+    # because two nodes cannot be initialised in the same file (commander and controller)
+    # a main node in intialised here to avoid that.
     rospy.init_node("gennav_ros_main")
+
     # Dictionary of implemented samplers
     sampler_registry = {
         "UniformRectSampler": gennav.utils.samplers.UniformRectSampler,
@@ -23,7 +27,7 @@ if __name__ == "__main__":
         "PotentialField": gennav.planners.PotentialField,
         "RRG": gennav.planners.RRG,
         "InformedRRTstar": gennav.planners.InformedRRTstar,
-        "RRTstar": gennav.planners.RRTstar,
+        #"RRTstar": gennav.planners.RRTStar,
     }
 
     # Dictionary of implemented environments
@@ -50,7 +54,8 @@ if __name__ == "__main__":
     # Instantiate sampler
     sampler_name = param_dict["sampler_name"]
     if sampler_name in sampler_registry.keys():
-        sampler = sampler_registry[sampler_name](goal, **param_dict[sampler_name])
+        print(param_dict[sampler_name])
+        sampler = sampler_registry[sampler_name](goal = goal, **param_dict[sampler_name])
     else:
         raise NotImplementedError(
             "Specified sampler ", sampler_name, " is not implemented"
@@ -71,7 +76,7 @@ if __name__ == "__main__":
     env_name = param_dict["env_name"]
     if env_name in env_registry.keys():
         env = env_registry[env_name](**param_dict[env_name])
-        env.update(param_dict["obstacle_data"])
+        # env.update(param_dict["obstacle_data"])
     else:
         raise NotImplementedError(
             "Specified environment ", env_name, " is not implemented"
@@ -89,7 +94,7 @@ if __name__ == "__main__":
     # Get message type object
     msg_dtype_name = param_dict["msg_dtype_name"]
     if msg_dtype_name in msg_dtype_registry.keys():
-        msg_dtype = msg_dtype_registry[msg_dtype_name]()
+        msg_dtype = msg_dtype_registry[msg_dtype_name]
     else:
         raise NotImplementedError(
             "Specified message type ", planner_name, " is not compatible"
@@ -111,3 +116,6 @@ if __name__ == "__main__":
     goal_state = RobotState(position=Point(*goal))
     start_state = RobotState(position=Point(*start))
     commander_node.goto(goal_state, start_state)
+
+    # ROS Magic (spin)
+    rospy.spin()
